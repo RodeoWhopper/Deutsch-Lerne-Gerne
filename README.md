@@ -43,7 +43,7 @@ CLI ile doğrulama: `npm run pack:validate packs/_example.json`. Örnek paket: `
 ```bash
 npm ci --ignore-scripts
 npm run build          # vite build + service worker
-npm test               # 72 test (birim + entegrasyon)
+npm test               # 76 test (birim + entegrasyon)
 npm run typecheck
 ALLOW_INSECURE_DEV=1 DATA_DIR=./data npm run setup
 ALLOW_INSECURE_DEV=1 DATA_DIR=./data npm start   # http://localhost:8080

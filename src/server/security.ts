@@ -84,7 +84,7 @@ export const mutationGuard: MiddlewareHandler = async (c, next) => {
     const sfs = c.req.header('sec-fetch-site');
     if (!ok || (sfs && sfs !== 'same-origin')) return c.json({ error: 'İstek reddedildi' }, 403);
     const ct = (c.req.header('content-type') ?? '').toLowerCase();
-    if (c.req.header('content-length') !== '0' && !ct.startsWith('application/json')) return c.json({ error: 'İstek reddedildi' }, 415);
+    if (c.req.raw.body !== null && !ct.startsWith('application/json')) return c.json({ error: 'İstek reddedildi' }, 415);
   }
   return next();
 };

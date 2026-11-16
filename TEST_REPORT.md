@@ -6,7 +6,7 @@ Tarih: 2026-11-16 · Ortam: Linux container, Node 22.23, Chromium (Playwright), 
 
 | | Durum |
 |---|---|
-| Birim + entegrasyon testleri | **72/72 geçti** (`npm test`) |
+| Birim + entegrasyon testleri | **76/76 geçti** (`npm test`) |
 | §4.10 testleri (12 madde) | **10 geçti**, 1 kısmi (trivy), **1 açık** (canlı TLS taraması: dağıtım yapılmadı) |
 | Uçtan uca (390×844 gerçek Chromium) | geçti: giriş+TOTP, paket içe aktarma (UI), günlük + sprint oturumu, 3 tema, 7 ekran, yatay taşma yok |
 | Üçüncü taraf istek | **0** |
@@ -120,7 +120,7 @@ Lighthouse (mobil emülasyon 390×844, oturum çerezi ile):
 
 SEO kategorisi bilinçli olarak 54: sayfalar `noindex` (kişisel uygulama) ve meta açıklaması yok. Lighthouse 12+ "PWA" kategorisini kaldırdığı için PWA kontrolü elle yapıldı: manifest `display: standalone`, `start_url /`, 192/512 ve maskable 512 ikon (kendi üretimimiz `>_` piksel ikonu, `scripts/make-icons.py`), hepsi HTTP 200; service worker `activated`, scope `/`, önbellek yalnızca `/assets/*.js`, `/assets/*.css`, `/fonts/*.woff2`; `/api/*` önbellekte **yok**. Çevrimdışı açılış bilinçli olarak yok (HTML ve API önbelleğe alınmaz).
 
-Önceki turlarda yakalanıp düzeltilen gerçek hatalar: Terminus'ta `░▒▓` glifleri bozuk (bkz. DECISIONS #24); `/api/auth/me`'nin sıkı rate-limit'e takılıp sayfa yüklemesini 429'a düşürmesi; `Permissions-Policy` içinde tanınmayan `bluetooth` özelliği; alt gezinmenin son satırı örtmesi (Lighthouse `target-size`).
+Geliştirme sırasında testlerle yakalanıp düzeltilen gerçek hatalar: gövdesiz `DELETE`'in (oturum iptali) JSON kısıtına takılıp 415 alması (`test/server.test.ts`); Terminus'ta `░▒▓` glifleri bozuk (bkz. DECISIONS #24); `/api/auth/me`'nin sıkı rate-limit'e takılıp sayfa yüklemesini 429'a düşürmesi; `Permissions-Policy` içinde tanınmayan `bluetooth` özelliği; alt gezinmenin son satırı örtmesi (Lighthouse `target-size`).
 
 ### Faz 5: yedek / geri yükleme provası
 ```
@@ -172,45 +172,49 @@ ok 32 - sülük: lapses >= 8
 ok 33 - erken tekrar (vadesi gelmemiş, doğru) aralığı şişirmez
 ok 34 - hint kullanımı -> hard, ease düşer
 ok 35 - istemci kodunda innerHTML / dangerouslySetInnerHTML / eval yok (§4.7)
-ok 36 - örnek paket geçerli
-ok 37 - JSON Schema (2020-12) örneği kabul eder, zod ile aynı sonuç
-ok 38 - bilinmeyen alan reddedilir (üst, pack, item)
-ok 39 - yanlış standard, id, level, tarih
-ok 40 - noun kuralları: küçük harf de, artikelli de, plural_only+article
-ok 41 - cloze tam bir {{}} içermeli; mcq answer choices içinde
-ok 42 - tekrarlı item id, 2000+ item
-ok 43 - kontrol karakterleri ve bidi reddedilir
-ok 44 - NFC normalizasyonu uygulanır
-ok 45 - 1 MB üstü ve geçersiz JSON reddedilir
-ok 46 - zararlı string içerikli paket geçerli ama düz metin olarak saklanır
-ok 47 - __proto__ anahtarı reddedilir
-ok 48 - setup: parola >= 24 karakter, 10 kurtarma kodu, argon2id hash, TOTP
-ok 49 - setup ikinci kez --reset olmadan reddedilir
-ok 50 - §4.10-1: oturumsuz her API route'u 401, veri yok
-ok 51 - oturumsuz sayfa istekleri /login'e yönlenir, bilinmeyen yol 404
-ok 52 - §4.10-2: çerez bayrakları (__Host-, HttpOnly, Secure, SameSite=Strict, Path=/, Domain yok)
-ok 53 - §4.10-3: 6+ hatalı giriş -> üstel gecikme, audit kaydı
-ok 54 - yanlış kullanıcı adı ile yanlış parola aynı hata
-ok 55 - §4.10-4: aynı TOTP kodu tekrar kullanılamaz (replay)
-ok 56 - kurtarma kodu tek kullanımlık
-ok 57 - §4.10-5: CSRF: başka origin / CSRF token yok / yanlış content-type reddedilir
-ok 58 - §4.10-8: tüm yanıtlarda güvenlik başlıkları
-ok 59 - HTTP -> HTTPS yönlendirmesi (proxy arkasında)
-ok 60 - §4.10-6/7: paket içe aktarma: dry-run, yeniden kimlik doğrulama, atomik, zararlı string düz metin
-ok 61 - akış: import -> aktif et -> kuyruk -> cevap -> SRS -> geri al
-ok 62 - oturum yönetimi: liste, iptal, hepsini kapat; çıkış sonrası 401
-ok 63 - oturum: boşta 14 gün ve mutlak 30 gün sonra düşer
-ok 64 - gizli bilgi logda yok: audit yalnızca olay türü içerir
-ok 65 - gün sınırı 04:00 Europe/Istanbul
-ok 66 - yeni kart: good -> 10 dk -> good -> 1 gün
-ok 67 - yeni kart: again -> 1 dk
-ok 68 - mezuniyet: 1 gün, sonra 3 gün, sonra interval x ease
-ok 69 - review again: lapse, ease düşer (alt sınır 1.3), relearning
-ok 70 - hard/easy ease değişimi
-ok 71 - ±5% sapma sınırı
-ok 72 - not üretimi
-# tests 72
-# pass 72
+ok 36 - v1: ekle
+ok 37 - v2 dry-run: güncelle (SRS korunur), cevabı etkileyen değişiklik işaretlenir, retire
+ok 38 - v2 apply: ilerleme korunur; v3: sıfırlama seçeneği + retire; geri alma
+ok 39 - başka paketin item id'sini ele geçirme reddedilir
+ok 40 - örnek paket geçerli
+ok 41 - JSON Schema (2020-12) örneği kabul eder, zod ile aynı sonuç
+ok 42 - bilinmeyen alan reddedilir (üst, pack, item)
+ok 43 - yanlış standard, id, level, tarih
+ok 44 - noun kuralları: küçük harf de, artikelli de, plural_only+article
+ok 45 - cloze tam bir {{}} içermeli; mcq answer choices içinde
+ok 46 - tekrarlı item id, 2000+ item
+ok 47 - kontrol karakterleri ve bidi reddedilir
+ok 48 - NFC normalizasyonu uygulanır
+ok 49 - 1 MB üstü ve geçersiz JSON reddedilir
+ok 50 - zararlı string içerikli paket geçerli ama düz metin olarak saklanır
+ok 51 - __proto__ anahtarı reddedilir
+ok 52 - setup: parola >= 24 karakter, 10 kurtarma kodu, argon2id hash, TOTP
+ok 53 - setup ikinci kez --reset olmadan reddedilir
+ok 54 - §4.10-1: oturumsuz her API route'u 401, veri yok
+ok 55 - oturumsuz sayfa istekleri /login'e yönlenir, bilinmeyen yol 404
+ok 56 - §4.10-2: çerez bayrakları (__Host-, HttpOnly, Secure, SameSite=Strict, Path=/, Domain yok)
+ok 57 - §4.10-3: 6+ hatalı giriş -> üstel gecikme, audit kaydı
+ok 58 - yanlış kullanıcı adı ile yanlış parola aynı hata
+ok 59 - §4.10-4: aynı TOTP kodu tekrar kullanılamaz (replay)
+ok 60 - kurtarma kodu tek kullanımlık
+ok 61 - §4.10-5: CSRF: başka origin / CSRF token yok / yanlış content-type reddedilir
+ok 62 - §4.10-8: tüm yanıtlarda güvenlik başlıkları
+ok 63 - HTTP -> HTTPS yönlendirmesi (proxy arkasında)
+ok 64 - §4.10-6/7: paket içe aktarma: dry-run, yeniden kimlik doğrulama, atomik, zararlı string düz metin
+ok 65 - akış: import -> aktif et -> kuyruk -> cevap -> SRS -> geri al
+ok 66 - oturum yönetimi: liste, iptal, hepsini kapat; çıkış sonrası 401
+ok 67 - oturum: boşta 14 gün ve mutlak 30 gün sonra düşer
+ok 68 - gizli bilgi logda yok: audit yalnızca olay türü içerir
+ok 69 - gün sınırı 04:00 Europe/Istanbul
+ok 70 - yeni kart: good -> 10 dk -> good -> 1 gün
+ok 71 - yeni kart: again -> 1 dk
+ok 72 - mezuniyet: 1 gün, sonra 3 gün, sonra interval x ease
+ok 73 - review again: lapse, ease düşer (alt sınır 1.3), relearning
+ok 74 - hard/easy ease değişimi
+ok 75 - ±5% sapma sınırı
+ok 76 - not üretimi
+# tests 76
+# pass 76
 # fail 0
 ```
 

@@ -250,6 +250,11 @@ test('oturum yönetimi: liste, iptal, hepsini kapat; çıkış sonrası 401', as
   const audit = (await (await a.req('GET', '/api/auth/audit')).json()) as any;
   assert.ok(audit.audit.length <= 20 && audit.audit.length > 0);
   assert.ok(!JSON.stringify(audit).includes('198.51.100.90'), 'tam IP loglanmaz/gösterilmez');
+  // tek tek iptal: b'nin oturumunu a iptal eder
+  const bId = list.sessions.find((x: any) => !x.current).id;
+  assert.equal((await a.req('DELETE', `/api/auth/sessions/${bId}`)).status, 200);
+  assert.equal((await b.req('GET', '/api/auth/me')).status, 401);
+  assert.equal((await a.req('GET', '/api/auth/me')).status, 200);
   await a.req('POST', '/api/auth/sessions/revoke-all', {});
   assert.equal((await a.req('GET', '/api/auth/me')).status, 401);
   assert.equal((await b.req('GET', '/api/auth/me')).status, 401);
