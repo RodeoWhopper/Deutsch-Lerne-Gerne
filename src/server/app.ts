@@ -14,6 +14,7 @@ import {
   dropChallenge, recordFailure, recordSuccess, revokeAllSessions, takeChallengeAttempt, throttleWait, type Session,
 } from './auth.ts';
 import { answer, buildQueue } from './engine.ts';
+import { loadCard } from './store.ts';
 import { analyze, apply, undoImport } from './importer.ts';
 import { getSettings, putSettings, settingsSchema } from './settings.ts';
 import { errorsView, home, leechExport, stats, tomorrowCount } from './stats.ts';
@@ -75,7 +76,9 @@ app.get('*', async (c, next) => {
 // ---------------- API ----------------
 const api = new Hono<Env>();
 api.use('*', mutationGuard);
-api.use('/auth/*', rateLimit('auth', 20));
+// strict limiter only on the credential endpoints; the failure counter (§4.4) covers everything else
+api.use('/auth/login', rateLimit('auth-login', 20));
+api.use('/auth/totp', rateLimit('auth-totp', 20));
 api.use('*', rateLimit('api', 400));
 
 const loginBody = z.strictObject({ username: z.string().min(1).max(64), password: z.string().min(1).max(256) });
@@ -137,7 +140,10 @@ api.use('*', async (c, next) => {
 });
 api.use('*', bodyLimit({ maxSize: 65_536, onError: (c) => c.json({ error: 'Gövde çok büyük' }, 413) }));
 
-api.get('/auth/me', (c) => c.json({ ok: true, csrf: c.get('session').csrf, settings: getSettings() }));
+api.get('/auth/me', (c) => {
+  const u = getDb().prepare('SELECT username FROM users WHERE id=1').get() as { username: string };
+  return c.json({ ok: true, csrf: c.get('session').csrf, user: u.username, settings: getSettings() });
+});
 api.post('/auth/logout', (c) => { destroyCurrent(c); return c.json({ ok: true }); });
 
 api.get('/auth/sessions', (c) => {
@@ -180,6 +186,12 @@ api.post('/study/answer', async (c) => {
   const b = await json(c, answerBody);
   if (!b) return c.json({ error: 'Geçersiz istek' }, 400);
   try { return c.json(answer(b)); } catch { return c.json({ error: 'Kart bulunamadı' }, 404); }
+});
+api.post('/study/reveal', async (c) => {
+  const b = await json(c, z.strictObject({ card_id: z.string().min(5).max(120) }));
+  const row = b ? loadCard(b.card_id) : null;
+  if (!row || row.item.kind !== 'grammar' || row.item.format !== 'qa') return c.json({ error: 'Geçersiz istek' }, 400);
+  return c.json({ expected: row.item.answer, explain: row.item.explain ?? null });
 });
 api.get('/study/tomorrow', (c) => c.json({ n: tomorrowCount() }));
 

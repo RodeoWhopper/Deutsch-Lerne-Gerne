@@ -176,16 +176,22 @@ export function buildQueue(opts: QueueOpts, now = Date.now(), rng: () => number 
       for (const c of cand.slice(0, 2 - have)) add(c, budget * 1.05);
     }
     counts.coverage = chosen.size - n0;
+    if (settings.sprint_new && newLeft > 0) {
+      // optional new cards: at most ~25% of the time budget, never beyond the daily limit
+      n0 = chosen.size;
+      let newSpent = 0;
+      for (const c of all.filter((c) => c.state.stage === 'new').sort(newOrder).slice(0, newLeft)) {
+        const e = estOf(c);
+        if (newSpent + e > budget * 0.25) break;
+        chosen.set(c.card_id, c); newSpent += e; spent += e;
+      }
+      counts.new = chosen.size - n0;
+    }
     n0 = chosen.size;
     const weak = all.filter((c) => c.state.stage !== 'new' && !chosen.has(c.card_id))
       .sort((a, b) => a.state.ease - b.state.ease || a.state.interval_days - b.state.interval_days || a.state.due - b.state.due);
     for (const c of weak) { if (spent >= budget) break; add(c, budget); }
     counts.fill = chosen.size - n0;
-    if (settings.sprint_new && newLeft > 0) {
-      n0 = chosen.size;
-      for (const c of all.filter((c) => c.state.stage === 'new').sort(newOrder).slice(0, newLeft)) add(c, budget);
-      counts.new = chosen.size - n0;
-    }
     picked = arrange(shuffled([...chosen.values()], rng), { siblingGap: 5, maxRun: 3 });
   }
 
