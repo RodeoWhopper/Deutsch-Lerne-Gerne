@@ -1,0 +1,12 @@
+node_modules/
+dist/
+data/
+*.db
+*.db-wal
+*.db-shm
+*.age
+.env
+.env.*
+!.env.example
+.DS_Store
+screenshots/tmp/

@@ -1,0 +1,593 @@
+{
+ "standard": "deutsch-pack/1",
+ "pack": {
+  "id": "h1g2-ulasim",
+  "title": "Ulaşım (Verkehr)",
+  "version": 1,
+  "level": "A1",
+  "taught_on": "2026-11-12",
+  "unit": "ulasim"
+ },
+ "items": [
+  {
+   "id": "n.bus",
+   "kind": "noun",
+   "de": "Bus",
+   "article": "der",
+   "tr": [
+    "otobüs"
+   ],
+   "plural": "Busse",
+   "example": {
+    "de": "Ich fahre mit dem Bus.",
+    "tr": "Otobüsle gidiyorum."
+   }
+  },
+  {
+   "id": "n.bahnhof",
+   "kind": "noun",
+   "de": "Bahnhof",
+   "article": "der",
+   "tr": [
+    "istasyon",
+    "tren istasyonu"
+   ],
+   "plural": "Bahnhöfe",
+   "example": {
+    "de": "Er kommt vom Bahnhof.",
+    "tr": "İstasyondan geliyor."
+   }
+  },
+  {
+   "id": "n.haltestelle",
+   "kind": "noun",
+   "de": "Haltestelle",
+   "article": "die",
+   "tr": [
+    "durak"
+   ],
+   "plural": "Haltestellen",
+   "example": {
+    "de": "Wo ist die Haltestelle?",
+    "tr": "Durak nerede?"
+   }
+  },
+  {
+   "id": "n.u-bahn",
+   "kind": "noun",
+   "de": "U-Bahn",
+   "article": "die",
+   "tr": [
+    "metro"
+   ],
+   "plural": "U-Bahnen",
+   "example": {
+    "de": "Wir fahren mit der U-Bahn.",
+    "tr": "Metroyla gidiyoruz."
+   }
+  },
+  {
+   "id": "n.zug",
+   "kind": "noun",
+   "de": "Zug",
+   "article": "der",
+   "tr": [
+    "tren"
+   ],
+   "plural": "Züge",
+   "example": {
+    "de": "Der Zug ist pünktlich.",
+    "tr": "Tren zamanında."
+   }
+  },
+  {
+   "id": "n.fahrkarte",
+   "kind": "noun",
+   "de": "Fahrkarte",
+   "article": "die",
+   "tr": [
+    "bilet"
+   ],
+   "plural": "Fahrkarten",
+   "example": {
+    "de": "Ich brauche eine Fahrkarte.",
+    "tr": "Bir bilete ihtiyacım var."
+   }
+  },
+  {
+   "id": "n.auto",
+   "kind": "noun",
+   "de": "Auto",
+   "article": "das",
+   "tr": [
+    "araba",
+    "otomobil"
+   ],
+   "plural": "Autos",
+   "example": {
+    "de": "Das Auto ist neu.",
+    "tr": "Araba yeni."
+   }
+  },
+  {
+   "id": "n.fahrrad",
+   "kind": "noun",
+   "de": "Fahrrad",
+   "article": "das",
+   "tr": [
+    "bisiklet"
+   ],
+   "plural": "Fahrräder",
+   "example": {
+    "de": "Ich fahre mit dem Fahrrad.",
+    "tr": "Bisikletle gidiyorum."
+   }
+  },
+  {
+   "id": "n.flugzeug",
+   "kind": "noun",
+   "de": "Flugzeug",
+   "article": "das",
+   "tr": [
+    "uçak"
+   ],
+   "plural": "Flugzeuge",
+   "example": {
+    "de": "Das Flugzeug landet um acht.",
+    "tr": "Uçak sekizde iniyor."
+   }
+  },
+  {
+   "id": "n.strasse",
+   "kind": "noun",
+   "de": "Straße",
+   "article": "die",
+   "tr": [
+    "cadde",
+    "sokak"
+   ],
+   "plural": "Straßen",
+   "example": {
+    "de": "Die Straße ist lang.",
+    "tr": "Cadde uzun."
+   }
+  },
+  {
+   "id": "n.ferien",
+   "kind": "noun",
+   "de": "Ferien",
+   "article": "die",
+   "tr": [
+    "tatil"
+   ],
+   "example": {
+    "de": "Die Ferien beginnen morgen.",
+    "tr": "Tatil yarın başlıyor."
+   },
+   "plural_only": true
+  },
+  {
+   "id": "n.gleis",
+   "kind": "noun",
+   "de": "Gleis",
+   "article": "das",
+   "tr": [
+    "peron",
+    "ray"
+   ],
+   "plural": "Gleise",
+   "example": {
+    "de": "Der Zug fährt auf Gleis fünf.",
+    "tr": "Tren beşinci perondan kalkıyor."
+   }
+  },
+  {
+   "id": "w.fahren",
+   "kind": "word",
+   "pos": "verb",
+   "de": "fahren",
+   "tr": [
+    "araçla gitmek",
+    "sürmek"
+   ],
+   "forms": {
+    "ich": "fahre",
+    "du": "fährst",
+    "er": "fährt"
+   },
+   "example": {
+    "de": "Ich fahre mit dem Bus.",
+    "tr": "Otobüsle gidiyorum."
+   }
+  },
+  {
+   "id": "w.ankommen",
+   "kind": "word",
+   "pos": "verb",
+   "de": "ankommen",
+   "tr": [
+    "varmak"
+   ],
+   "forms": {
+    "ich": "komme an",
+    "du": "kommst an",
+    "er": "kommt an"
+   },
+   "example": {
+    "de": "Wir kommen um acht an.",
+    "tr": "Sekizde varıyoruz."
+   }
+  },
+  {
+   "id": "w.schnell",
+   "kind": "word",
+   "pos": "adj",
+   "de": "schnell",
+   "tr": [
+    "hızlı"
+   ],
+   "example": {
+    "de": "Der Zug ist schnell.",
+    "tr": "Tren hızlı."
+   }
+  },
+  {
+   "id": "w.puenktlich",
+   "kind": "word",
+   "pos": "adj",
+   "de": "pünktlich",
+   "tr": [
+    "dakik",
+    "zamanında"
+   ]
+  },
+  {
+   "id": "w.spaeter",
+   "kind": "word",
+   "pos": "adv",
+   "de": "später",
+   "tr": [
+    "daha sonra",
+    "sonra"
+   ],
+   "example": {
+    "de": "Bis später!",
+    "tr": "Sonra görüşürüz!"
+   }
+  },
+  {
+   "id": "v.folgen",
+   "kind": "verb_case",
+   "de": "folgen",
+   "tr": [
+    "takip etmek"
+   ],
+   "case": "dat",
+   "cloze": "Ich folge {{dem}} Fahrer.",
+   "example": {
+    "de": "Ich folge dem Fahrer.",
+    "tr": "Şoförü takip ediyorum."
+   },
+   "trap": "Türkçede -i alır ama Dativ."
+  },
+  {
+   "id": "v.helfen",
+   "kind": "verb_case",
+   "de": "helfen",
+   "tr": [
+    "yardım etmek"
+   ],
+   "case": "dat",
+   "cloze": "Er hilft {{mir}} oft.",
+   "example": {
+    "de": "Er hilft mir oft.",
+    "tr": "Bana sık sık yardım eder."
+   },
+   "trap": "Türkçede -e alır, Almancada da Dativ; kişi her zaman Dativ."
+  },
+  {
+   "id": "v.sehen",
+   "kind": "verb_case",
+   "de": "sehen",
+   "tr": [
+    "görmek"
+   ],
+   "case": "akk",
+   "cloze": "Ich sehe {{den}} Bus.",
+   "example": {
+    "de": "Ich sehe den Bus.",
+    "tr": "Otobüsü görüyorum."
+   }
+  },
+  {
+   "id": "v.kaufen",
+   "kind": "verb_case",
+   "de": "kaufen",
+   "tr": [
+    "satın almak"
+   ],
+   "case": "akk",
+   "cloze": "Sie kauft {{eine}} Fahrkarte.",
+   "example": {
+    "de": "Sie kauft eine Fahrkarte.",
+    "tr": "Bir bilet satın alıyor."
+   }
+  },
+  {
+   "id": "v.gefallen",
+   "kind": "verb_case",
+   "de": "gefallen",
+   "tr": [
+    "hoşuna gitmek",
+    "beğenilmek"
+   ],
+   "case": "dat",
+   "cloze": "Der Zug gefällt {{mir}}.",
+   "example": {
+    "de": "Der Zug gefällt mir.",
+    "tr": "Tren hoşuma gidiyor."
+   },
+   "trap": "Türkçede 'ben beğeniyorum' derken özne ben; Almancada özne şey.",
+   "reverse_structure": true
+  },
+  {
+   "id": "v.geben",
+   "kind": "verb_case",
+   "de": "geben",
+   "tr": [
+    "vermek"
+   ],
+   "case": "both",
+   "cloze": "Ich gebe {{dem}} Fahrer die Karte.",
+   "example": {
+    "de": "Ich gebe dem Fahrer die Karte.",
+    "tr": "Şoföre bileti veriyorum."
+   },
+   "trap": "Kişi Dativ, şey Akkusativ."
+  },
+  {
+   "id": "p.mit",
+   "kind": "prep",
+   "de": "mit",
+   "tr": [
+    "ile"
+   ],
+   "case": "dat",
+   "use": "araç veya kişi",
+   "example": {
+    "de": "Ich fahre mit dem Bus.",
+    "tr": "Otobüsle gidiyorum."
+   }
+  },
+  {
+   "id": "p.von",
+   "kind": "prep",
+   "de": "von",
+   "tr": [
+    "-den/-dan"
+   ],
+   "case": "dat",
+   "use": "başlangıç, sahiplik",
+   "example": {
+    "de": "Er kommt vom Bahnhof.",
+    "tr": "İstasyondan geliyor."
+   }
+  },
+  {
+   "id": "p.durch",
+   "kind": "prep",
+   "de": "durch",
+   "tr": [
+    "içinden",
+    "aracılığıyla"
+   ],
+   "case": "akk",
+   "use": "içinden geçiş",
+   "example": {
+    "de": "Wir fahren durch den Tunnel.",
+    "tr": "Tünelden geçiyoruz."
+   }
+  },
+  {
+   "id": "p.fuer",
+   "kind": "prep",
+   "de": "für",
+   "tr": [
+    "için"
+   ],
+   "case": "akk",
+   "use": "amaç, alıcı",
+   "example": {
+    "de": "Das ist für dich.",
+    "tr": "Bu senin için."
+   }
+  },
+  {
+   "id": "p.in",
+   "kind": "prep",
+   "de": "in",
+   "tr": [
+    "içinde",
+    "içine"
+   ],
+   "case": "wechsel",
+   "use": "wo? Dativ / wohin? Akkusativ",
+   "example": {
+    "de": "Ich gehe in die Stadt.",
+    "tr": "Şehre gidiyorum."
+   }
+  },
+  {
+   "id": "p.seit",
+   "kind": "prep",
+   "de": "seit",
+   "tr": [
+    "-den beri"
+   ],
+   "case": "dat",
+   "use": "süre başlangıcı",
+   "example": {
+    "de": "Ich wohne seit einem Jahr hier.",
+    "tr": "Bir yıldır burada oturuyorum."
+   }
+  },
+  {
+   "id": "c.weil",
+   "kind": "conj",
+   "de": "weil",
+   "tr": [
+    "çünkü"
+   ],
+   "verb_position": "end",
+   "example": {
+    "de": "Ich lerne Deutsch, weil ich in Deutschland arbeiten möchte.",
+    "tr": "Almanya'da çalışmak istediğim için Almanca öğreniyorum."
+   }
+  },
+  {
+   "id": "c.dass",
+   "kind": "conj",
+   "de": "dass",
+   "tr": [
+    "-diğini",
+    "ki"
+   ],
+   "verb_position": "end",
+   "example": {
+    "de": "Ich weiß, dass der Zug spät ist.",
+    "tr": "Trenin geç olduğunu biliyorum."
+   }
+  },
+  {
+   "id": "c.denn",
+   "kind": "conj",
+   "de": "denn",
+   "tr": [
+    "çünkü"
+   ],
+   "verb_position": "second",
+   "example": {
+    "de": "Ich bleibe zu Hause, denn ich bin müde.",
+    "tr": "Evde kalıyorum çünkü yorgunum."
+   }
+  },
+  {
+   "id": "c.aber",
+   "kind": "conj",
+   "de": "aber",
+   "tr": [
+    "ama"
+   ],
+   "verb_position": "second",
+   "example": {
+    "de": "Der Bus ist alt, aber er ist bequem.",
+    "tr": "Otobüs eski ama rahat."
+   }
+  },
+  {
+   "id": "g.dat.mit.fem",
+   "kind": "grammar",
+   "format": "mcq",
+   "prompt": "Wir fahren mit ___ U-Bahn.",
+   "choices": [
+    "dem",
+    "der",
+    "den",
+    "die"
+   ],
+   "answer": "der",
+   "explain": "mit + Dativ; dişil → der"
+  },
+  {
+   "id": "g.vom",
+   "kind": "grammar",
+   "format": "cloze",
+   "text": "Er kommt {{vom}} Bahnhof.",
+   "accept": [
+    "vom",
+    "von dem"
+   ],
+   "explain": "von + dem = vom"
+  },
+  {
+   "id": "g.akk.durch",
+   "kind": "grammar",
+   "format": "mcq",
+   "prompt": "Wir fahren durch ___ Tunnel.",
+   "choices": [
+    "den",
+    "dem",
+    "der",
+    "das"
+   ],
+   "answer": "den",
+   "explain": "durch + Akkusativ; eril → den"
+  },
+  {
+   "id": "g.verb2",
+   "kind": "grammar",
+   "format": "qa",
+   "prompt": "Ana cümlede çekimli fiil kaçıncı sırada durur?",
+   "answer": "2. sırada (Position 2)",
+   "explain": "Ana cümlede fiil her zaman 2. sırada."
+  },
+  {
+   "id": "g.zum",
+   "kind": "grammar",
+   "format": "cloze",
+   "text": "Ich gehe {{zum}} Bahnhof.",
+   "accept": [
+    "zum",
+    "zu dem"
+   ],
+   "explain": "zu + dem = zum"
+  },
+  {
+   "id": "g.fahren.du",
+   "kind": "grammar",
+   "format": "mcq",
+   "prompt": "Du ___ nach Berlin. (fahren)",
+   "choices": [
+    "fahrst",
+    "fährst",
+    "fahrt",
+    "fährt"
+   ],
+   "answer": "fährst",
+   "explain": "fahren: a → ä (du, er)"
+  },
+  {
+   "id": "s.wo-ist-haltestelle",
+   "kind": "phrase",
+   "de": "Wo ist die Haltestelle?",
+   "tr": [
+    "Durak nerede?"
+   ]
+  },
+  {
+   "id": "s.einmal-fahrkarte",
+   "kind": "phrase",
+   "de": "Eine Fahrkarte, bitte.",
+   "tr": [
+    "Bir bilet lütfen."
+   ]
+  },
+  {
+   "id": "s.wie-komme-ich",
+   "kind": "phrase",
+   "de": "Wie komme ich zum Bahnhof?",
+   "tr": [
+    "İstasyona nasıl giderim?"
+   ]
+  },
+  {
+   "id": "s.wann-faehrt",
+   "kind": "phrase",
+   "de": "Wann fährt der nächste Zug?",
+   "tr": [
+    "Bir sonraki tren ne zaman kalkıyor?"
+   ]
+  }
+ ],
+ "retire": []
+}
