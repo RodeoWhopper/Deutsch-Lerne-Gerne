@@ -36,7 +36,7 @@ export function Link({ href, children, class: cls, ...rest }: { href: string; ch
 
 export function Screen({ cmd, user, children, nav: showNav = true, path }: { cmd: string; user: string; children: ComponentChildren; nav?: boolean; path?: string }) {
   return (
-    <div class="term">
+    <div class={showNav ? 'term has-nav' : 'term'}>
       <header class="prompt"><span class="u">{user}@deutsch</span><span class="p">:~$</span> {cmd}</header>
       <main>{children}</main>
       {showNav && <Nav path={path ?? location.pathname} />}

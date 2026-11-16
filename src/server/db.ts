@@ -133,6 +133,7 @@ export function openDb(path?: string): DB {
   const file = path ?? join(config.dataDir, 'app.db');
   if (file !== ':memory:') {
     mkdirSync(config.dataDir, { recursive: true, mode: 0o700 });
+    try { chmodSync(config.dataDir, 0o700); } catch { /* mounted volume may refuse */ }
   }
   const db = new DatabaseSync(file);
   db.exec('PRAGMA journal_mode = WAL; PRAGMA foreign_keys = ON; PRAGMA busy_timeout = 5000; PRAGMA synchronous = NORMAL;');

@@ -159,3 +159,9 @@ select { background: var(--bg); color: var(--hi); border: 1px solid var(--line);
 @media (min-width: 700px) { .term { padding: 0 8px; } .thumb { position: static; } }
 .lsrow .sub { grid-column: 1 / -1; color: var(--dim); overflow-wrap: anywhere; }
 .bf, .be { letter-spacing: 2px; } .term .status .bar { letter-spacing: 0; }
+
+/* screens with bottom nav: content scrolls in <main>, nav never overlaps it */
+.term.has-nav { height: 100dvh; min-height: 0; }
+.term.has-nav > main { overflow-y: auto; min-height: 0; overscroll-behavior: contain; }
+.term.has-nav .nav { position: static; flex: none; }
+.term.has-nav > .prompt { flex: none; }

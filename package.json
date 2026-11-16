@@ -16,6 +16,7 @@
     "pack:validate": "node scripts/pack-validate.ts",
     "schema:gen": "node scripts/gen-schema.ts",
     "backup": "node --disable-warning=ExperimentalWarning scripts/backup.ts",
+    "restore": "node --disable-warning=ExperimentalWarning scripts/restore.ts",
     "test": "node --disable-warning=ExperimentalWarning --test test/*.test.ts",
     "typecheck": "tsc --noEmit"
   },
