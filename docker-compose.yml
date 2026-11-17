@@ -5,6 +5,7 @@ services:
   app:
     build: .
     restart: unless-stopped
+    user: "1000:1000"   # skips the root->node entrypoint step; volume is node-owned
     read_only: true
     cap_drop: [ALL]
     security_opt: ["no-new-privileges:true"]

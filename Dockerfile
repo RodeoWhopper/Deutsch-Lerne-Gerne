@@ -26,14 +26,14 @@ RUN if [ "$INSTALL_AGE" = "1" ]; then \
     && mkdir /data && chown node:node /data
 COPY --from=prod-deps --chown=root:root /app/node_modules ./node_modules
 COPY --from=build --chown=root:root /app/dist ./dist
-COPY --chown=root:root package.json ./
+COPY --chown=root:root package.json docker-entrypoint.sh ./
 COPY --chown=root:root src ./src
 COPY --chown=root:root scripts ./scripts
 COPY --chown=root:root schema ./schema
 COPY --chown=root:root packs ./packs
-USER node
 VOLUME /data
 EXPOSE 8080
 HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
   CMD node -e "fetch('http://127.0.0.1:'+(process.env.PORT||8080)+'/healthz').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+ENTRYPOINT ["/app/docker-entrypoint.sh"]
 CMD ["node", "--disable-warning=ExperimentalWarning", "src/server/index.ts"]
