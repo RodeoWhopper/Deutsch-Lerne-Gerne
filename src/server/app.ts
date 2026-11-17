@@ -111,6 +111,12 @@ api.post('/auth/login', bodyLimit({ maxSize: 4096, onError: (c) => c.json({ erro
   const ok = b ? await checkPassword(b.username, b.password) : false;
   if (!ok) { recordFailure(c); audit(c, 'password', false); return c.json(FAIL, 401); }
   audit(c, 'password', true);
+  if (!config.requireTotp) {
+    recordSuccess(c);
+    const sess = createSession(c);
+    audit(c, 'login', true);
+    return c.json({ ok: true, csrf: sess.csrf });
+  }
   return c.json({ challenge: createChallenge(), enroll: !hasTotp() });
 });
 
@@ -118,6 +124,7 @@ api.post('/auth/totp', bodyLimit({ maxSize: 4096, onError: (c) => c.json({ error
   const b = await json(c, totpBody);
   const bl = blocked(c);
   if (bl) return bl;
+  if (!config.requireTotp) return c.json(FAIL, 401);
   if (!b || !takeChallengeAttempt(b.challenge)) { recordFailure(c); audit(c, 'totp', false); return c.json(FAIL, 401); }
   const kind = checkSecondFactor(b.code);
   if (!kind) { recordFailure(c); audit(c, 'totp', false); return c.json(FAIL, 401); }
@@ -135,7 +142,7 @@ api.post('/auth/enroll-start', bodyLimit({ maxSize: 4096, onError: (c) => c.json
   const b = await json(c, enrollStartBody);
   const bl = blocked(c);
   if (bl) return bl;
-  if (!b || hasTotp() || !challengeAlive(b.challenge)) { recordFailure(c); return c.json(FAIL, 401); }
+  if (!config.requireTotp || !b || hasTotp() || !challengeAlive(b.challenge)) { recordFailure(c); return c.json(FAIL, 401); }
   const secret = getEnrollSecret(b.challenge) ?? newSecret();
   setEnrollSecret(b.challenge, secret);
   const u = getDb().prepare('SELECT username FROM users WHERE id=1').get() as { username: string };
@@ -145,7 +152,7 @@ api.post('/auth/enroll-finish', bodyLimit({ maxSize: 4096, onError: (c) => c.jso
   const b = await json(c, totpBody);
   const bl = blocked(c);
   if (bl) return bl;
-  if (!b || hasTotp() || !takeChallengeAttempt(b.challenge)) { recordFailure(c); audit(c, 'enroll', false); return c.json(FAIL, 401); }
+  if (!config.requireTotp || !b || hasTotp() || !takeChallengeAttempt(b.challenge)) { recordFailure(c); audit(c, 'enroll', false); return c.json(FAIL, 401); }
   const secret = getEnrollSecret(b.challenge);
   const step = secret ? matchStep(secret, b.code.trim(), clock.now()) : null;
   if (!secret || step === null) { recordFailure(c); audit(c, 'enroll', false); return c.json(FAIL, 401); }

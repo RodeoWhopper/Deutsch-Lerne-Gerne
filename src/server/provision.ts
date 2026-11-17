@@ -73,7 +73,7 @@ export async function seedFromEnv(env = process.env): Promise<'none' | 'exists' 
   if (!username || !password) return 'none';
   const db = getDb();
   if (db.prepare('SELECT 1 FROM users WHERE id=1').get()) return 'exists';
-  if (!/^[A-Za-z0-9_.-]{3,32}$/.test(username) || password.length < 12) return 'weak';
+  if (!/^[A-Za-z0-9_.-]{3,32}$/.test(username) || password.length < 10) return 'weak';
   const argon = await calibrate();
   const pw_hash = await hash(password, argonParams(argon.t, argon.m));
   tx(db, () => {

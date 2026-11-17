@@ -21,6 +21,7 @@ export function Login() {
     e.preventDefault(); setBusy(true); setErr('');
     const r = await api('POST', '/api/auth/login', { username: user, password: pw });
     setBusy(false);
+    if (r.status === 200 && r.data.ok) { setCsrf(r.data.csrf); location.assign('/'); return; }
     if (r.status === 200) {
       setChallenge(r.data.challenge); setPw('');
       if (r.data.enroll) {

@@ -5,7 +5,7 @@ Tek kullanıcılı, internete açık, kişisel içerik. Bu belge uygulanan önle
 ## Kimlik doğrulama
 - **Genel kayıt endpoint'i yok.** Hesap `npm run setup` ile veya yalnızca kullanıcı yokken `SEED_USERNAME`/`SEED_PASSWORD` ortam değişkenleriyle oluşur (DECISIONS #35); seed'li hesapta TOTP ilk girişte kaydedilir. İkinci setup `--reset` olmadan reddedilir.
 - Parola CSPRNG ile 28 karakter üretilir, bir kez terminale basılır, hiçbir yere yazılmaz. argon2id (m=64 MiB, t=makineye göre ~300 ms) ile saklanır.
-- TOTP zorunlu (RFC 6238, ±1 pencere, **replay koruması**: son kullanılan time-step saklanır). 10 tek kullanımlık kurtarma kodu yalnızca SHA-256 hash olarak saklanır.
+- TOTP varsayılan olarak zorunlu; `REQUIRE_TOTP=0` ile kapatılabilir (DECISIONS #36, tek faktör: güçlü parola şart). TOTP açıkken (RFC 6238, ±1 pencere, **replay koruması**: son kullanılan time-step saklanır). 10 tek kullanımlık kurtarma kodu yalnızca SHA-256 hash olarak saklanır.
 - Sıfırlama yalnızca sunucu kabuğundan (`npm run reset-credentials`): parola, TOTP, kurtarma kodları yenilenir, tüm oturumlar düşer. Web'de "şifremi unuttum" yoktur.
 - Tek tip hata ("Giriş başarısız"); kullanıcı adı var/yok ayrımı sızmaz (sahte hash ile eşit süre).
 
