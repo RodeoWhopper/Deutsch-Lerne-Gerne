@@ -53,7 +53,13 @@ docker run -d --name deutsch --restart unless-stopped -v deutsch-data:/data -p 8
 ```
 Şema `CREATE TABLE IF NOT EXISTS` ile açılışta uygulanır. Güncellemeden önce yedek al. Service worker sürümü her derlemede değişir; istemciler bir sonraki açılışta yeni kabuğu alır.
 
-## Canlıya alma: dlg.runiksoft.com (Cloudflare Tunnel)
+## Canlıya alma: Railway (kullanılan yol)
+- Proje `deutsch-terminal` → servis `app` (repo dalı otomatik build), volume `/data`, healthcheck `/healthz`.
+- Hesap kurulumu bir kez, Railway CLI ile: `railway link` → `railway ssh` → `npm run setup` (çıktıyı parola yöneticisine kopyala).
+- Alan adı: Cloudflare'de `dlg` CNAME → Railway'in verdiği hedef (ml26efk2.up.railway.app), önce **DNS only** (gri bulut) ile doğrulat. Doğrulanınca servis değişkenlerine `APP_HOST=dlg.runiksoft.com` ekle. Turuncu buluta (proxy) geçersen: SSL Full (strict), Rocket Loader/Auto Minify/Web Analytics kapalı; Ayarlar → son girişlerde IP'nin gerçek istemci IP'si olduğunu kontrol et, değilse `TRUST_PROXY=2`.
+- Güncelleme: dala push → Railway otomatik build eder (otomatik başlamazsa panelden *Deploy*).
+
+## Alternatif: dlg.runiksoft.com (Cloudflare Tunnel + compose)
 
 Sunucuda Docker ve bu repo yeterli; **dışarıya port açmana gerek yok**.
 
