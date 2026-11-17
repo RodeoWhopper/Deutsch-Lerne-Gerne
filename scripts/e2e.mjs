@@ -42,13 +42,13 @@ await page.waitForSelector('.kv', { timeout: 5000 });
 // ---- import pack via UI ----
 await page.goto(BASE + '/packs');
 await page.fill('textarea[aria-label="paket JSON"]', pack);
-await page.click('text=[ dry-run ]');
+await page.click('text=[ önizle ]');
 await page.waitForSelector('.man .kv');
 await page.evaluate(() => window.scrollTo(0, 400));
 await shot('04-packs-dryrun');
 await page.fill('#rp', pass);
-await page.click('text=[ içe aktar ]');
-await page.waitForSelector('text=içe aktarıldı');
+await page.click('text=[ yükle ]');
+await page.waitForSelector('text=yüklendi');
 await page.click('button:has-text("[ ] pasif")');
 await page.waitForSelector('button:has-text("[x] aktif")');
 await page.evaluate(() => window.scrollTo(0, 0));
@@ -107,7 +107,7 @@ for (const [p, name] of [['/topics', '13-topics'], ['/errors', '14-errors'], ['/
   await shot(name);
 }
 await page.goto(BASE + '/errors');
-await page.click('text=[ sülük özeti ]'); await page.waitForTimeout(300); await shot('14b-errors-export');
+await page.click('text=[ zorlanılan kartların özeti ]'); await page.waitForTimeout(300); await shot('14b-errors-export');
 
 // ---- CRT on + typed result view in dos theme for visual check ----
 await page.goto(BASE + '/settings');

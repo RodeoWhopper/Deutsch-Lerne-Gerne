@@ -15,7 +15,7 @@ export function Topics({ ctx }: { ctx: Ctx }) {
             {Object.entries<any>(h.tracks).map(([t, v]) => (
               <Link key={t} class="lsrow" href={`/study/topic?track=${t}`}>
                 <span class="name">{trackLabel[t]}</span>
-                <span class="meta">{v.cards} kart · vadeli {v.due} · yeni {v.new}</span>
+                <span class="meta">{v.cards} kart · tekrar {v.due} · yeni {v.new}</span>
                 <span class="bar">{bar(v.strength, 20)} {Math.round(v.strength * 100)}%</span>
               </Link>
             ))}
@@ -26,7 +26,7 @@ export function Topics({ ctx }: { ctx: Ctx }) {
             {h.units.map((u: any) => (
               <Link key={u.unit} class="lsrow" href={`/study/topic?unit=${u.unit}`}>
                 <span class="name">{u.title}</span>
-                <span class="meta">{u.cards} kart · vadeli {u.due}</span>
+                <span class="meta">{u.cards} kart · tekrar {u.due}</span>
                 <span class="bar">{bar(u.strength, 20)} {Math.round(u.strength * 100)}%</span>
               </Link>
             ))}

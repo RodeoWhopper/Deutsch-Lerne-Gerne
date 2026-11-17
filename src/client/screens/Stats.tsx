@@ -12,7 +12,7 @@ export function Stats({ ctx }: { ctx: Ctx }) {
   return (
     <Screen cmd="stats --days=30" user={ctx.user}>
       <fieldset>
-        <legend>isabet (son 30 gün)</legend>
+        <legend>doğru oranı (son 30 gün)</legend>
         {s.accuracy.length === 0 && <p class="dim">Henüz veri yok.</p>}
         {s.accuracy.map((a: any) => (
           <div key={a.track} class="lsrow"><span class="name">{trackLabel[a.track]}</span><span class="meta">{a.ok}/{a.n} {bar(a.ok / a.n, 10)} {Math.round((a.ok / a.n) * 100)}%</span></div>
@@ -25,7 +25,7 @@ export function Stats({ ctx }: { ctx: Ctx }) {
         ))}
       </fieldset>
       <fieldset>
-        <legend>tahmini yük (vadesi gelecek kart)</legend>
+        <legend>önümüzdeki günlerde gelecek kartlar</legend>
         {s.forecast.map((m: any, i: number) => (
           <div key={m.day} class="lsrow"><span class="name dim">{i === 0 ? 'bugün' : m.day.slice(5)}</span><span class="meta">{bar(m.n / maxF, 12)} {m.n}</span></div>
         ))}

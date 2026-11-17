@@ -29,18 +29,18 @@ export function Errors({ ctx }: { ctx: Ctx }) {
         <>
           <div class="btns">
             <Link class="btn pri" href="/study/errors">[ hataları çalış ]</Link>
-            <button class="btn" onClick={doExport}>[ sülük özeti ]</button>
+            <button class="btn" onClick={doExport}>[ zorlanılan kartların özeti ]</button>
           </div>
           {exp && (
             <fieldset>
-              <legend>paylaşılabilir özet</legend>
-              <textarea readOnly value={exp} aria-label="sülük özeti" />
+              <legend>paylaşabileceğin özet</legend>
+              <textarea readOnly value={exp} aria-label="zorlanılan kartların özeti" />
               <div class="btns"><button class="btn" onClick={copy}>{copied ? '[ kopyalandı ]' : '[ kopyala ]'}</button></div>
             </fieldset>
           )}
           <fieldset>
-            <legend>sülükler ({d.leeches.length})</legend>
-            {d.leeches.length === 0 && <p class="dim">Sülük yok.</p>}
+            <legend>çok yanlış yapılan kartlar ({d.leeches.length})</legend>
+            {d.leeches.length === 0 && <p class="dim">Çok yanlış yapılan kart yok.</p>}
             {d.leeches.map((e: any) => <Row key={e.card_id} e={e} />)}
           </fieldset>
           <fieldset>

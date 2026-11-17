@@ -43,7 +43,7 @@ export function SettingsScreen({ ctx }: { ctx: Ctx }) {
     try { data = JSON.parse(await f.text()); } catch { setMsg('geçerli JSON değil'); return; }
     const r = await api('POST', '/api/progress/import', { data, reauth: { password: pw } });
     setPw('');
-    setMsg(r.status === 200 ? 'ilerleme içe aktarıldı' : r.status === 403 ? 'Doğrulama başarısız' : r.data?.error ?? 'başarısız');
+    setMsg(r.status === 200 ? 'ilerleme yüklendi' : r.status === 403 ? 'Parola yanlış' : r.data?.error ?? 'başarısız');
   };
 
   const toggle = (k: 'crt' | 'sprint_new' | 'vibrate' | 'wake_lock', label: string, note?: string) => (
@@ -71,13 +71,13 @@ export function SettingsScreen({ ctx }: { ctx: Ctx }) {
         <div class="btns">
           {[10, 15, 20].map((m) => <button key={m} class={s.sprint_minutes === m ? 'btn pri' : 'btn'} aria-pressed={s.sprint_minutes === m} onClick={() => save({ sprint_minutes: m as 10 | 15 | 20 })}>{m} dk</button>)}
         </div>
-        {toggle('sprint_new', "sprint'te yeni kart")}
-        {toggle('wake_lock', 'sprint sırasında ekran açık kalsın')}
+        {toggle('sprint_new', "yoğun günde de yeni kart gelsin")}
+        {toggle('wake_lock', 'yoğun gün sırasında ekran açık kalsın')}
         {toggle('vibrate', 'titreşim geri bildirimi')}
       </fieldset>
 
       <fieldset>
-        <legend>aktif oturumlar</legend>
+        <legend>açık oturumlar</legend>
         {sessions.map((x) => (
           <div key={x.id} class="lsrow">
             <span class="name">{x.ua}{x.current ? ' (bu cihaz)' : ''}<br /><span class="dim">{x.ip_trunc} · son: {fmtDate(x.last_used)}</span></span>
@@ -96,10 +96,10 @@ export function SettingsScreen({ ctx }: { ctx: Ctx }) {
 
       <fieldset>
         <legend>ilerleme</legend>
-        <div class="btns"><button class="btn" onClick={exportProgress}>[ dışa aktar (JSON) ]</button></div>
-        <label for="ip">içe aktarmak için parola</label>
+        <div class="btns"><button class="btn" onClick={exportProgress}>[ indir (JSON) ]</button></div>
+        <label for="ip">yüklemak için parola</label>
         <input id="ip" type="password" autocomplete="current-password" value={pw} onInput={(e) => setPw((e.target as HTMLInputElement).value)} />
-        <label for="if">ilerleme dosyası</label>
+        <label for="if">ilerleme dosyası (yükle)</label>
         <input id="if" type="file" accept="application/json,.json" onChange={importProgress} />
       </fieldset>
 

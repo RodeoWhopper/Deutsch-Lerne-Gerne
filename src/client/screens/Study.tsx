@@ -49,7 +49,7 @@ export function Study({ mode, ctx }: { mode: Mode; ctx: Ctx }) {
     if (track) body.track = track;
     if (unit) body.unit = unit;
     api('POST', '/api/study/queue', body).then((r) => {
-      if (r.status !== 200) { setError('Kuyruk yüklenemedi'); return; }
+      if (r.status !== 200) { setError('Kartlar yüklenemedi'); return; }
       queue.current = r.data.questions;
       setLoaded(true);
       t0.current = performance.now();
@@ -144,7 +144,7 @@ export function Study({ mode, ctx }: { mode: Mode; ctx: Ctx }) {
   if (phase === 'done') return <Summary cmd={cmd} ctx={ctx} results={results.current} tomorrow={tomorrow} mode={mode} empty={total === 0} />;
   if (!q) return null;
 
-  const timer = mode === 'sprint' ? `[sprint ${mmss(left)}]` : `[${mode}]`;
+  const timer = mode === 'sprint' ? `[yoğun gün ${mmss(left)}]` : `[${mode}]`;
   const nDone = Math.min(idx + (phase === 'result' ? 1 : 0), total);
 
   return (
@@ -230,7 +230,7 @@ function Result({ q, res, answer }: { q: Q; res: Res; answer: string }) {
   const isChoice = q.kind === 'choice';
   return (
     <div role="status">
-      <div>{stamp} {res.leech && <span class="dim">sülük: sık yanlış yapılıyor</span>}</div>
+      <div>{stamp} {res.leech && <span class="dim">bu kartı sık yanlış yapıyorsun</span>}</div>
       {!res.correct && (
         <div class="diff">
           {!isChoice && <div class="minus">{res.user_line || '(boş)'}</div>}
@@ -271,7 +271,7 @@ function Summary({ cmd, ctx, results, tomorrow, mode, empty }: { cmd: string; ct
     <Screen cmd={cmd} user={ctx.user} nav={false}>
       {empty ? (
         <>
-          <h1>kuyruk boş</h1>
+          <h1>çalışılacak kart yok</h1>
           <p>Bu mod için şu an çalışılacak kart yok.</p>
           {mode === 'errors' ? <p class="dim">Son 14 günde yanlış yapılan kart yok.</p> : <p class="dim">Aktif paketler ve günlük yeni kart limiti için <Link href="/packs">/packs</Link> ve <Link href="/settings">/settings</Link>.</p>}
         </>
@@ -281,10 +281,10 @@ function Summary({ cmd, ctx, results, tomorrow, mode, empty }: { cmd: string; ct
           <div class="kv">
             <span>toplam</span><b>{results.length}</b>
             <span>doğru</span><b>{ok} ({results.length ? Math.round((ok / results.length) * 100) : 0}%)</b>
-            <span>yarın tahmini</span><span>{tomorrow ?? '…'} kart</span>
+            <span>yarın için tahmini</span><span>{tomorrow ?? '…'} kart</span>
           </div>
           <fieldset>
-            <legend>track bazında</legend>
+            <legend>konu başına</legend>
             {[...byTrack].map(([t, v]) => (
               <div key={t} class="lsrow"><span class="name">{trackLabel[t]}</span><span class="meta">{v.ok}/{v.n} {bar(v.ok / v.n, 8)}</span></div>
             ))}
@@ -298,7 +298,7 @@ function Summary({ cmd, ctx, results, tomorrow, mode, empty }: { cmd: string; ct
         </>
       )}
       <div class="btns">
-        <Link class="btn pri" href="/errors">[ hata defterine git ]</Link>
+        <Link class="btn pri" href="/errors">[ hata defterine bak ]</Link>
         <Link class="btn" href="/">[ ana ekran ]</Link>
       </div>
     </Screen>

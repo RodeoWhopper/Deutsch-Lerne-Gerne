@@ -34,15 +34,15 @@ export function Packs({ ctx }: { ctx: Ctx }) {
     setBusy(true); setErrs([]);
     const r = await api('POST', '/api/packs/import', { raw, reset_progress: reset, reauth: { password: pw } });
     setBusy(false); setPw('');
-    if (r.status === 200) { setMsg('içe aktarıldı. Paketi etkinleştirmeyi unutma.'); setPlan(null); setRaw(''); load(); }
-    else if (r.status === 403) setErrs(['Doğrulama başarısız']);
+    if (r.status === 200) { setMsg('yüklendi. Paketi etkinleştirmeyi unutma.'); setPlan(null); setRaw(''); load(); }
+    else if (r.status === 403) setErrs(['Parola yanlış']);
     else setErrs(r.data?.errors ?? [r.data?.error ?? 'başarısız']);
   };
   const toggle = async (id: string, active: boolean) => { await api('PUT', `/api/packs/${id}/active`, { active }); load(); };
   const undo = async (id: number) => {
     const r = await api('POST', '/api/packs/undo', { import_id: id, reauth: { password: pw } });
     setPw(''); setUndoId(null);
-    setMsg(r.status === 200 ? 'geri alındı' : r.status === 403 ? 'Doğrulama başarısız' : r.data?.error ?? 'başarısız');
+    setMsg(r.status === 200 ? 'geri alındı' : r.status === 403 ? 'Parola yanlış' : r.data?.error ?? 'başarısız');
     load();
   };
 
@@ -55,20 +55,20 @@ export function Packs({ ctx }: { ctx: Ctx }) {
         {d && d.packs.length === 0 && <p class="dim">Henüz paket yok.</p>}
         {d?.packs.map((p: any) => (
           <div key={p.id} class="lsrow">
-            <span class="name">{p.title}<br /><span class="dim">{p.id} · v{p.version} · {p.level} · {p.items} item{p.retired ? ` (+${p.retired} emekli)` : ''}</span></span>
+            <span class="name">{p.title}<br /><span class="dim">{p.id} · v{p.version} · {p.level} · {p.items} item{p.retired ? ` (+${p.retired} kaldırılan)` : ''}</span></span>
             <button class={p.active ? 'btn pri' : 'btn'} aria-pressed={!!p.active} onClick={() => toggle(p.id, !p.active)}>{p.active ? '[x] aktif' : '[ ] pasif'}</button>
           </div>
         ))}
       </fieldset>
 
       <fieldset>
-        <legend>içe aktar</legend>
-        <p class="dim">deutsch-pack/1 JSON yapıştır veya dosya seç. Önce dry-run yapılır, hiçbir şey yazılmaz.</p>
+        <legend>yükle</legend>
+        <p class="dim">Paket dosyasını (JSON) yapıştır veya dosya seç. Önce önizleme gösterilir, onaylamadan hiçbir şey kaydedilmez.</p>
         <textarea value={raw} placeholder='{"standard":"deutsch-pack/1", …}' spellcheck={false} autocapitalize="off" autocorrect="off" aria-label="paket JSON"
           onInput={(e) => { setRaw((e.target as HTMLTextAreaElement).value); setPlan(null); setErrs([]); }} />
         <label for="pf">veya dosya</label>
         <input id="pf" type="file" accept="application/json,.json" onChange={onFile} />
-        <div class="btns"><button class="btn pri" disabled={!raw.trim() || busy} onClick={dry}>[ dry-run ]</button></div>
+        <div class="btns"><button class="btn pri" disabled={!raw.trim() || busy} onClick={dry}>[ önizle ]</button></div>
         {errs.length > 0 && <div class="errbox" role="alert">{errs.map((e) => <div key={e}>{e}</div>)}</div>}
         {plan && (
           <div class="man">
@@ -77,25 +77,25 @@ export function Packs({ ctx }: { ctx: Ctx }) {
               <span>eklenecek</span><b>{plan.add}</b>
               <span>güncellenecek</span><b>{plan.update + plan.restore}</b>
               <span>değişmeyecek</span><span>{plan.unchanged}</span>
-              <span>emekliye</span><b>{plan.retire}</b>
+              <span>kaldırılacak</span><b>{plan.retire}</b>
               <span>yeni kart</span><span>{plan.new_cards}</span>
             </div>
             {plan.answer_changed.length > 0 && (
               <>
-                <p class="hi">Cevabı etkileyen alan değişti ({plan.answer_changed.length} item): ilerleme sıfırlanabilir.</p>
+                <p class="hi">Cevabı etkileyen bir alan değişti ({plan.answer_changed.length} item): ilerleme sıfırlanabilir.</p>
                 <p class="dim">{plan.answer_changed.join(', ')}</p>
                 <label><input type="checkbox" checked={reset} onChange={(e) => setReset((e.target as HTMLInputElement).checked)} /> bu itemların ilerlemesini sıfırla</label>
               </>
             )}
             <label for="rp">onay için parola</label>
             <input id="rp" type="password" autocomplete="current-password" value={pw} onInput={(e) => setPw((e.target as HTMLInputElement).value)} />
-            <div class="btns"><button class="btn pri" disabled={!pw || busy} onClick={doImport}>[ içe aktar ]</button></div>
+            <div class="btns"><button class="btn pri" disabled={!pw || busy} onClick={doImport}>[ yükle ]</button></div>
           </div>
         )}
       </fieldset>
 
       <fieldset>
-        <legend>içe aktarma geçmişi</legend>
+        <legend>yükleme geçmişi</legend>
         {d?.log.length === 0 && <p class="dim">Kayıt yok.</p>}
         {d?.log.map((l: any) => (
           <div key={l.id} class="lsrow">

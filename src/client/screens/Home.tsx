@@ -21,7 +21,7 @@ export function Home({ ctx }: { ctx: Ctx }) {
     return (
       <div class="term" onClick={() => setBoot(false)} role="button" tabIndex={0}>
         <main class="boot">
-          {`deutsch-terminal\nson oturum   : ${h.last_review ? fmtDate(h.last_review) : 'yok'}\nvadesi gelen : ${h.due}\nhata defteri : ${h.errors}\n\n(dokun: geç)`}
+          {`deutsch-terminal\nson oturum   : ${h.last_review ? fmtDate(h.last_review) : 'yok'}\nbugün tekrar : ${h.due}\nhata defteri : ${h.errors}\n\n(dokun: geç)`}
         </main>
       </div>
     );
@@ -32,29 +32,29 @@ export function Home({ ctx }: { ctx: Ctx }) {
   return (
     <Screen cmd="ls" user={ctx.user}>
       <div class="kv">
-        <span>vadesi gelen</span><b>{h.due}</b>
+        <span>bugün tekrar</span><b>{h.due}</b>
         <span>yeni (bugün)</span><span>{h.new_available}</span>
         <span>hata defteri</span><span>{h.errors}</span>
         <span>son 7 gün</span><b>{blocks}</b>
       </div>
 
       {h.active_packs === 0 && (
-        <p class="errbox">Aktif paket yok. <Link href="/packs">/packs</Link> sayfasından bir paket içe aktar ve etkinleştir.</p>
+        <p class="errbox">Aktif paket yok. <Link href="/packs">/packs</Link> sayfasından bir paket yükle ve etkinleştir.</p>
       )}
 
       <fieldset>
         <legend>başlat</legend>
-        <Link class="lsrow" href="/study/daily"><span class="name">[1] günlük</span><span class="meta">{h.due} vadeli + {h.new_available} yeni</span></Link>
+        <Link class="lsrow" href="/study/daily"><span class="name">[1] günlük</span><span class="meta">{h.due} tekrar + {h.new_available} yeni</span></Link>
         <div class="lsrow">
           <span class="name">[2] yoğun gün</span>
-          <span class="meta">süre kutulu</span>
+          <span class="meta">süreli</span>
         </div>
         <div class="btns">
           {[10, 15, 20].map((m) => (
             <button key={m} class={m === sm ? 'btn pri' : 'btn'} onClick={() => nav(`/study/sprint?m=${m}`)}>[ {m} dk ]</button>
           ))}
         </div>
-        <Link class="lsrow" href="/study/mini"><span class="name">[3] mini (2 dk)</span><span class="meta">≤ 10 kart</span></Link>
+        <Link class="lsrow" href="/study/mini"><span class="name">[3] mini (2 dk)</span><span class="meta">en fazla 10 kart</span></Link>
       </fieldset>
 
       <fieldset>
@@ -63,7 +63,7 @@ export function Home({ ctx }: { ctx: Ctx }) {
           {Object.entries<any>(h.tracks).map(([t, v]) => (
             <Link key={t} class="lsrow" href={`/study/topic?track=${t}`}>
               <span class="name">{trackLabel[t]}</span>
-              <span class="meta">vadeli {v.due} · {v.cards} kart</span>
+              <span class="meta">tekrar {v.due} · {v.cards} kart</span>
               <span class="bar">{bar(v.strength)} {Math.round(v.strength * 100)}%</span>
             </Link>
           ))}
@@ -77,7 +77,7 @@ export function Home({ ctx }: { ctx: Ctx }) {
             {h.units.map((u: any) => (
               <Link key={u.unit} class="lsrow" href={`/study/topic?unit=${u.unit}`}>
                 <span class="name">{u.title}</span>
-                <span class="meta">{u.cards} kart · vadeli {u.due}</span>
+                <span class="meta">{u.cards} kart · tekrar {u.due}</span>
                 <span class="bar">{bar(u.strength)} {Math.round(u.strength * 100)}%</span>
               </Link>
             ))}
