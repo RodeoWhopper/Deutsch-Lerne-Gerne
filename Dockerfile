@@ -31,7 +31,6 @@ COPY --chown=root:root src ./src
 COPY --chown=root:root scripts ./scripts
 COPY --chown=root:root schema ./schema
 COPY --chown=root:root packs ./packs
-VOLUME /data
 EXPOSE 8080
 HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
   CMD node -e "fetch('http://127.0.0.1:'+(process.env.PORT||8080)+'/healthz').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
