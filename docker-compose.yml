@@ -1,0 +1,27 @@
+# Deutsch Terminal + Cloudflare Tunnel. No host ports are published: the only way in is the tunnel.
+# Cloudflare Zero Trust > Networks > Tunnels > create tunnel > copy the token into .env (TUNNEL_TOKEN).
+# Public hostname in the tunnel:  dlg.runiksoft.com  ->  HTTP  app:8080
+services:
+  app:
+    build: .
+    restart: unless-stopped
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    environment:
+      APP_HOST: dlg.runiksoft.com
+      TRUST_PROXY: "1"        # one hop: cloudflared (Cloudflare edge sets X-Forwarded-For / -Proto)
+      DATA_DIR: /data
+      BACKUP_AGE_RECIPIENT: ${BACKUP_AGE_RECIPIENT:-}
+    volumes:
+      - deutsch-data:/data
+    expose: ["8080"]
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    restart: unless-stopped
+    command: tunnel --no-autoupdate run
+    environment:
+      TUNNEL_TOKEN: ${TUNNEL_TOKEN:?set TUNNEL_TOKEN in .env}
+    depends_on: [app]
+volumes:
+  deutsch-data:

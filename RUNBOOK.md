@@ -53,6 +53,28 @@ docker run -d --name deutsch --restart unless-stopped -v deutsch-data:/data -p 8
 ```
 Şema `CREATE TABLE IF NOT EXISTS` ile açılışta uygulanır. Güncellemeden önce yedek al. Service worker sürümü her derlemede değişir; istemciler bir sonraki açılışta yeni kabuğu alır.
 
+## Canlıya alma: dlg.runiksoft.com (Cloudflare Tunnel)
+
+Sunucuda Docker ve bu repo yeterli; **dışarıya port açmana gerek yok**.
+
+1. Cloudflare Zero Trust → Networks → Tunnels → *Create tunnel* (Cloudflared). Token'ı kopyala.
+2. Tunnel'ın *Public hostname* kısmına: `dlg.runiksoft.com` → Service **HTTP** `app:8080` (compose ağındaki servis adı). DNS kaydını Cloudflare kendisi oluşturur.
+3. Sunucuda:
+   ```bash
+   cp .env.example .env     # TUNNEL_TOKEN=... doldur (.env repoya girmez)
+   docker compose build     # INSTALL_AGE varsayılan 1: yedek için age kurulur
+   docker compose run --rm app npm run setup     # hesabı oluştur, çıktıyı parola yöneticisine kopyala
+   docker compose up -d
+   ```
+4. Cloudflare panelinde (Zone: runiksoft.com) şunları ayarla:
+   - SSL/TLS modu **Full (strict)** (tunnel kullanırsan origin TLS gerekmez), *Always Use HTTPS* açık, *Minimum TLS* 1.2.
+   - **Kapat:** Rocket Loader, Auto Minify, Email Obfuscation, Web Analytics (beacon) ve her türlü script enjeksiyonu. Bunlar CSP'yi (`script-src 'self'`) kırar ve üçüncü taraf istek ekler.
+   - `dlg.runiksoft.com` için Cache Rule: yalnızca `/assets/*` ve `/fonts/*` önbelleğe alınabilir; geri kalanı *Bypass*.
+   - HSTS'i uygulama zaten gönderir (`max-age=63072000; includeSubDomains`); Cloudflare'de ayrıca açma, `includeSubDomains` runiksoft.com'un diğer alt alan adlarını etkiler, önce onları HTTPS'e hazırla.
+5. Doğrula: `https://dlg.runiksoft.com/login` açılıyor; `curl -I https://dlg.runiksoft.com/login` başlıkları görünüyor; `testssl.sh dlg.runiksoft.com` ve securityheaders taraması çalıştır; sonuçları `TEST_REPORT.md` §4.10 #12'ye ekle.
+
+Uygulama `APP_HOST=dlg.runiksoft.com` ile yalnızca bu Host/Origin'e cevap verir; başka bir Host 404 alır, `http` istekleri `https://dlg.runiksoft.com`'a 308 yönlenir. `TRUST_PROXY=1`: zincirde tek hop (cloudflared) vardır; araya bir de Caddy/nginx koyarsan `2` yap, aksi hâlde hız sınırı ve audit yanlış IP görür.
+
 ## Barındırma notları
 - Tek container + kalıcı volume (`/data`). Fly.io/Railway/Molder.sh/VPS fark etmez.
 - TLS'i platform/reverse proxy sonlandırır; `TRUST_PROXY=1` (zincirde 1 proxy). Proxy `X-Forwarded-For/Proto` göndermeli.

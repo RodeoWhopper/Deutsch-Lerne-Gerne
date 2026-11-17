@@ -13,6 +13,8 @@ export const config = {
   trustProxy: int(process.env.TRUST_PROXY, 0),
   /** local development / tests only: skip https redirect */
   insecureDev: process.env.ALLOW_INSECURE_DEV === '1',
+  /** if set, requests for any other Host/Origin are rejected (e.g. dlg.runiksoft.com) */
+  appHost: (process.env.APP_HOST ?? '').toLowerCase(),
   distDir: resolve(process.env.DIST_DIR ?? './dist/client'),
   // brute-force knobs
   ipFailThreshold: int(process.env.IP_FAIL_THRESHOLD, 5),

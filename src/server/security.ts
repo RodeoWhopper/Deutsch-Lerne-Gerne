@@ -59,16 +59,21 @@ export function shortUa(ua: string | undefined): string {
 
 /** HTTP -> HTTPS (behind a proxy). /healthz is exempt for container health checks. */
 export const httpsOnly: MiddlewareHandler = async (c, next) => {
+  if (config.appHost && c.req.path !== '/healthz') {
+    const h = ((config.trustProxy > 0 ? c.req.header('x-forwarded-host') : null) ?? c.req.header('host') ?? '').toLowerCase();
+    if (h !== config.appHost) return c.text('Not found', 404);
+  }
   if (config.insecureDev || c.req.path === '/healthz') return next();
   const proto = config.trustProxy > 0 ? c.req.header('x-forwarded-proto') : new URL(c.req.url).protocol.replace(':', '');
   if (proto && proto !== 'https') {
-    const host = (config.trustProxy > 0 ? c.req.header('x-forwarded-host') : null) ?? c.req.header('host') ?? '';
+    const host = config.appHost || ((config.trustProxy > 0 ? c.req.header('x-forwarded-host') : null) ?? c.req.header('host') ?? '');
     return c.redirect(`https://${host}${c.req.path}`, 308);
   }
   return next();
 };
 
 function requestHost(c: Context): string {
+  if (config.appHost) return config.appHost; // Origin must equal the configured host
   return ((config.trustProxy > 0 ? c.req.header('x-forwarded-host') : null) ?? c.req.header('host') ?? '').toLowerCase();
 }
 
