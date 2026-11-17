@@ -37,7 +37,8 @@ CREATE TABLE IF NOT EXISTS sessions (
 CREATE TABLE IF NOT EXISTS challenges (
   token_hash TEXT PRIMARY KEY,
   expires_at INTEGER NOT NULL,
-  attempts INTEGER NOT NULL DEFAULT 0
+  attempts INTEGER NOT NULL DEFAULT 0,
+  enroll_secret TEXT
 );
 CREATE TABLE IF NOT EXISTS auth_fail (
   scope TEXT PRIMARY KEY,
@@ -138,6 +139,8 @@ export function openDb(path?: string): DB {
   const db = new DatabaseSync(file);
   db.exec('PRAGMA journal_mode = WAL; PRAGMA foreign_keys = ON; PRAGMA busy_timeout = 5000; PRAGMA synchronous = NORMAL;');
   db.exec(SCHEMA);
+  const cols = db.prepare('PRAGMA table_info(challenges)').all() as { name: string }[];
+  if (!cols.some((c) => c.name === 'enroll_secret')) db.exec('ALTER TABLE challenges ADD COLUMN enroll_secret TEXT');
   if (file !== ':memory:') {
     try { chmodSync(file, 0o600); } catch { /* volume may not support chmod */ }
   }

@@ -27,7 +27,7 @@ test('§4.10-1: oturumsuz her API route\'u 401, veri yok', async () => {
   const c = new Client(H.app, '198.51.100.1');
   const routes = H.app.routes.filter((r) => r.path.startsWith('/api/') && r.method !== 'ALL');
   const seen = new Set<string>();
-  const publicPaths = new Set(['/api/auth/login', '/api/auth/totp']);
+  const publicPaths = new Set(['/api/auth/login', '/api/auth/totp', '/api/auth/enroll-start', '/api/auth/enroll-finish']);
   let checked = 0;
   for (const r of routes) {
     const path = r.path.replace(/:id/g, '1');

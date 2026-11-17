@@ -61,3 +61,24 @@ export async function provision(username: string, reset: boolean): Promise<Provi
     recoveryCodes: codes.map((c) => c.match(/.{4}/g)!.join('-')),
   };
 }
+
+/**
+ * Optional bootstrap from env (SEED_USERNAME / SEED_PASSWORD). Runs only while NO user exists, never overwrites.
+ * The account has no TOTP yet: it is enrolled at first login (password is verified first).
+ * Returns a status string for the (secret-free) startup log.
+ */
+export async function seedFromEnv(env = process.env): Promise<'none' | 'exists' | 'weak' | 'created'> {
+  const username = env.SEED_USERNAME?.trim();
+  const password = env.SEED_PASSWORD;
+  if (!username || !password) return 'none';
+  const db = getDb();
+  if (db.prepare('SELECT 1 FROM users WHERE id=1').get()) return 'exists';
+  if (!/^[A-Za-z0-9_.-]{3,32}$/.test(username) || password.length < 12) return 'weak';
+  const argon = await calibrate();
+  const pw_hash = await hash(password, argonParams(argon.t, argon.m));
+  tx(db, () => {
+    if (db.prepare('SELECT 1 FROM users WHERE id=1').get()) return;
+    db.prepare('INSERT INTO users(id,username,pw_hash,created_at) VALUES(1,?,?,?)').run(username, pw_hash, Date.now());
+  });
+  return 'created';
+}

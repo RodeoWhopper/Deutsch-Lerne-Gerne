@@ -168,3 +168,15 @@ export function destroyCurrent(c: Context) {
 }
 
 export const revokeAllSessions = () => getDb().prepare('DELETE FROM sessions').run();
+
+// ---------- first-login TOTP enrollment (seeded accounts have no TOTP yet) ----------
+export const hasTotp = () => !!getDb().prepare('SELECT 1 FROM totp WHERE user_id=1').get();
+
+export function challengeAlive(token: string, now = Date.now()): boolean {
+  const r = getDb().prepare('SELECT expires_at FROM challenges WHERE token_hash=?').get(sha256(token)) as { expires_at: number } | undefined;
+  return !!r && r.expires_at >= now;
+}
+export const getEnrollSecret = (token: string) =>
+  (getDb().prepare('SELECT enroll_secret s FROM challenges WHERE token_hash=?').get(sha256(token)) as { s: string | null } | undefined)?.s ?? null;
+export const setEnrollSecret = (token: string, secret: string) =>
+  getDb().prepare('UPDATE challenges SET enroll_secret=? WHERE token_hash=?').run(secret, sha256(token));

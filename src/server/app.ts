@@ -3,7 +3,8 @@ import { bodyLimit } from 'hono/body-limit';
 import { z } from 'zod';
 import { readFile, stat } from 'node:fs/promises';
 import { join, resolve, extname, sep } from 'node:path';
-import { timingSafeEqual } from 'node:crypto';
+import { timingSafeEqual, randomBytes } from 'node:crypto';
+import { matchStep, newSecret, otpauthUri, b32encode } from './totp.ts';
 import { config } from './config.ts';
 import { getDb, tx } from './db.ts';
 import {
@@ -11,7 +12,7 @@ import {
 } from './security.ts';
 import {
   audit, checkPassword, checkPasswordOnly, checkSecondFactor, createChallenge, createSession, currentSession, destroyCurrent,
-  dropChallenge, recordFailure, recordSuccess, revokeAllSessions, takeChallengeAttempt, throttleWait, type Session,
+  dropChallenge, hasTotp, challengeAlive, getEnrollSecret, setEnrollSecret, clock, recoveryHash, recordFailure, recordSuccess, revokeAllSessions, takeChallengeAttempt, throttleWait, type Session,
 } from './auth.ts';
 import { answer, buildQueue } from './engine.ts';
 import { loadCard } from './store.ts';
@@ -79,6 +80,8 @@ api.use('*', mutationGuard);
 // strict limiter only on the credential endpoints; the failure counter (§4.4) covers everything else
 api.use('/auth/login', rateLimit('auth-login', 20));
 api.use('/auth/totp', rateLimit('auth-totp', 20));
+api.use('/auth/enroll-start', rateLimit('auth-enroll', 20));
+api.use('/auth/enroll-finish', rateLimit('auth-enroll', 20));
 api.use('*', rateLimit('api', 400));
 
 const loginBody = z.strictObject({ username: z.string().min(1).max(64), password: z.string().min(1).max(256) });
@@ -108,7 +111,7 @@ api.post('/auth/login', bodyLimit({ maxSize: 4096, onError: (c) => c.json({ erro
   const ok = b ? await checkPassword(b.username, b.password) : false;
   if (!ok) { recordFailure(c); audit(c, 'password', false); return c.json(FAIL, 401); }
   audit(c, 'password', true);
-  return c.json({ challenge: createChallenge() });
+  return c.json({ challenge: createChallenge(), enroll: !hasTotp() });
 });
 
 api.post('/auth/totp', bodyLimit({ maxSize: 4096, onError: (c) => c.json({ error: 'Giriş başarısız' }, 413) }), async (c) => {
@@ -123,6 +126,44 @@ api.post('/auth/totp', bodyLimit({ maxSize: 4096, onError: (c) => c.json({ error
   const s = createSession(c);
   audit(c, kind === 'recovery' ? 'recovery' : 'login', true);
   return c.json({ ok: true, csrf: s.csrf, recovery_used: kind === 'recovery' });
+});
+
+
+// First-login TOTP enrollment: only reachable with a fresh password-verified challenge while no TOTP exists.
+const enrollStartBody = z.strictObject({ challenge: z.string().min(10).max(100) });
+api.post('/auth/enroll-start', bodyLimit({ maxSize: 4096, onError: (c) => c.json(FAIL, 413) }), async (c) => {
+  const b = await json(c, enrollStartBody);
+  const bl = blocked(c);
+  if (bl) return bl;
+  if (!b || hasTotp() || !challengeAlive(b.challenge)) { recordFailure(c); return c.json(FAIL, 401); }
+  const secret = getEnrollSecret(b.challenge) ?? newSecret();
+  setEnrollSecret(b.challenge, secret);
+  const u = getDb().prepare('SELECT username FROM users WHERE id=1').get() as { username: string };
+  return c.json({ secret: secret.match(/.{1,4}/g)!.join(' '), otpauth: otpauthUri(secret, u.username) });
+});
+api.post('/auth/enroll-finish', bodyLimit({ maxSize: 4096, onError: (c) => c.json(FAIL, 413) }), async (c) => {
+  const b = await json(c, totpBody);
+  const bl = blocked(c);
+  if (bl) return bl;
+  if (!b || hasTotp() || !takeChallengeAttempt(b.challenge)) { recordFailure(c); audit(c, 'enroll', false); return c.json(FAIL, 401); }
+  const secret = getEnrollSecret(b.challenge);
+  const step = secret ? matchStep(secret, b.code.trim(), clock.now()) : null;
+  if (!secret || step === null) { recordFailure(c); audit(c, 'enroll', false); return c.json(FAIL, 401); }
+  const db = getDb();
+  const codes = Array.from({ length: 10 }, () => b32encode(randomBytes(10)));
+  const done = tx(db, () => {
+    if (hasTotp()) return false;
+    db.prepare('INSERT INTO totp(user_id,secret,last_step) VALUES(1,?,?)').run(secret, step);
+    const ins = db.prepare('INSERT INTO recovery_codes(user_id,code_hash) VALUES(1,?)');
+    for (const code of codes) ins.run(recoveryHash(code));
+    return true;
+  });
+  if (!done) return c.json(FAIL, 401);
+  dropChallenge(b.challenge);
+  recordSuccess(c);
+  const s = createSession(c);
+  audit(c, 'enroll', true);
+  return c.json({ ok: true, csrf: s.csrf, recovery_codes: codes.map((x) => x.match(/.{4}/g)!.join('-')) });
 });
 
 // ---- everything below requires a session ----

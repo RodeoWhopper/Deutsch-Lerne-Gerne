@@ -55,7 +55,7 @@ docker run -d --name deutsch --restart unless-stopped -v deutsch-data:/data -p 8
 
 ## Canlıya alma: Railway (kullanılan yol)
 - Proje `deutsch-terminal` → servis `app` (repo dalı otomatik build), volume `/data`, healthcheck `/healthz`.
-- Hesap kurulumu bir kez, Railway CLI ile: `railway link` → `railway ssh` → `npm run setup` (çıktıyı parola yöneticisine kopyala).
+- Hesap: Railway servis değişkenlerine `SEED_USERNAME` ve `SEED_PASSWORD` (≥ 12 karakter) ekle, deploy et. İlk girişte parolanla gir, ekrandaki kurulum anahtarını authenticator'a ekle, kodu doğrula, kurtarma kodlarını parola yöneticisine kopyala. Sonra `SEED_PASSWORD`'u sil. (Alternatif: `railway ssh` → `npm run setup`.)
 - Alan adı: Cloudflare'de `dlg` CNAME → Railway'in verdiği hedef (ml26efk2.up.railway.app), önce **DNS only** (gri bulut) ile doğrulat. Doğrulanınca servis değişkenlerine `APP_HOST=dlg.runiksoft.com` ekle. Turuncu buluta (proxy) geçersen: SSL Full (strict), Rocket Loader/Auto Minify/Web Analytics kapalı; Ayarlar → son girişlerde IP'nin gerçek istemci IP'si olduğunu kontrol et, değilse `TRUST_PROXY=2`.
 - Güncelleme: dala push → Railway otomatik build eder (otomatik başlamazsa panelden *Deploy*).
 
