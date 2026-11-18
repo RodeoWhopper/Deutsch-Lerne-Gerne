@@ -107,8 +107,8 @@ Sen bir yapay zekâ asistanısın. Görevin: kullanıcının anlattığı Almanc
 
 ## 7. Kullanıcı paketi nasıl yükler
 1. Uygulamada **paket** sekmesine gir.
-2. JSON'u kutuya yapıştır (veya dosya olarak seç) ve **önizle**'ye bas. Hata varsa liste halinde gösterilir; hatayı düzeltip yeniden dene.
-3. Özet doğruysa parolayı yaz ve **yükle**'ye bas.
+2. JSON'u kutuya yapıştır (veya dosya olarak seç) ve **2. önizle**'ye bas. Hata varsa liste halinde gösterilir; hatayı düzeltip yeniden dene.
+3. Önizleme gelince ekran otomatik aşağı kayar. Özet doğruysa parolanı yazıp **paketi kaydet**'e bas. (Kaydetmeden hiçbir şey eklenmez.)
 4. Yüklenen paket başta **pasif** gelir. Listeden **etkinleştir**; ondan sonra kartlar çalışmaya girer.
 
 ## 8. Bir paketi düzeltmek veya genişletmek

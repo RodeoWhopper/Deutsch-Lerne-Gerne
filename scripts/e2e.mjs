@@ -42,13 +42,13 @@ await page.waitForSelector('.kv', { timeout: 5000 });
 // ---- import pack via UI ----
 await page.goto(BASE + '/packs');
 await page.fill('textarea[aria-label="paket JSON"]', pack);
-await page.click('text=[ önizle ]');
+await page.click('text=[ 2. önizle ]');
 await page.waitForSelector('.man .kv');
 await page.evaluate(() => window.scrollTo(0, 400));
 await shot('04-packs-dryrun');
 await page.fill('#rp', pass);
-await page.click('text=[ yükle ]');
-await page.waitForSelector('text=yüklendi');
+await page.click('text=[ paketi kaydet ]');
+await page.waitForSelector('text=Paket kaydedildi');
 await page.click('button:has-text("[ ] pasif")');
 await page.waitForSelector('button:has-text("[x] aktif")');
 await page.evaluate(() => window.scrollTo(0, 0));

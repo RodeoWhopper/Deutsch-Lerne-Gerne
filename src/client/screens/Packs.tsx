@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'preact/hooks';
+import { useEffect, useRef, useState } from 'preact/hooks';
 import { api } from '../api.ts';
 import type { Ctx } from '../main.tsx';
 import { Screen, fmtDate } from '../ui.tsx';
@@ -13,6 +13,8 @@ export function Packs({ ctx }: { ctx: Ctx }) {
   const [msg, setMsg] = useState('');
   const [busy, setBusy] = useState(false);
   const [undoId, setUndoId] = useState<number | null>(null);
+  const confirmRef = useRef<HTMLDivElement>(null);
+  useEffect(() => { if (plan) setTimeout(() => confirmRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50); }, [plan]);
 
   const load = () => api('GET', '/api/packs').then((r) => r.status === 200 && setD(r.data));
   useEffect(() => { load(); }, []);
@@ -34,7 +36,7 @@ export function Packs({ ctx }: { ctx: Ctx }) {
     setBusy(true); setErrs([]);
     const r = await api('POST', '/api/packs/import', { raw, reset_progress: reset, reauth: { password: pw } });
     setBusy(false); setPw('');
-    if (r.status === 200) { setMsg('yüklendi. Paketi etkinleştirmeyi unutma.'); setPlan(null); setRaw(''); load(); }
+    if (r.status === 200) { setMsg('Paket kaydedildi. Şimdi aşağıdaki listeden [ ] pasif düğmesine basıp etkinleştir.'); setPlan(null); setRaw(''); load(); }
     else if (r.status === 403) setErrs(['Parola yanlış']);
     else setErrs(r.data?.errors ?? [r.data?.error ?? 'başarısız']);
   };
@@ -62,16 +64,17 @@ export function Packs({ ctx }: { ctx: Ctx }) {
       </fieldset>
 
       <fieldset>
-        <legend>yükle</legend>
-        <p class="dim">Paket dosyasını (JSON) yapıştır veya dosya seç. Önce önizleme gösterilir, onaylamadan hiçbir şey kaydedilmez.</p>
+        <legend>paket ekle</legend>
+        <p class="dim"><b>1.</b> Paket dosyasını (JSON) yapıştır veya dosya seç. <b>2.</b> Önizle. <b>3.</b> Çıkan özeti kontrol edip parolanla kaydet. Kaydetmeden hiçbir şey eklenmez.</p>
         <textarea value={raw} placeholder='{"standard":"deutsch-pack/1", …}' spellcheck={false} autocapitalize="off" autocorrect="off" aria-label="paket JSON"
           onInput={(e) => { setRaw((e.target as HTMLTextAreaElement).value); setPlan(null); setErrs([]); }} />
-        <label for="pf">veya dosya</label>
+        <label for="pf">veya dosyadan seç (.json)</label>
         <input id="pf" type="file" accept="application/json,.json" onChange={onFile} />
-        <div class="btns"><button class="btn pri" disabled={!raw.trim() || busy} onClick={dry}>[ önizle ]</button></div>
+        <div class="btns"><button class="btn pri" disabled={!raw.trim() || busy} onClick={dry}>[ 2. önizle ]</button></div>
         {errs.length > 0 && <div class="errbox" role="alert">{errs.map((e) => <div key={e}>{e}</div>)}</div>}
         {plan && (
-          <div class="man">
+          <div class="man" ref={confirmRef}>
+            <p class="hi"><b>3. Önizleme hazır.</b> Henüz kaydedilmedi. Özeti kontrol et, parolanı yaz ve kaydet.</p>
             <div class="mh">{plan.pack.title} · v{plan.pack.version}</div>
             <div class="kv">
               <span>eklenecek</span><b>{plan.add}</b>
@@ -87,9 +90,9 @@ export function Packs({ ctx }: { ctx: Ctx }) {
                 <label><input type="checkbox" checked={reset} onChange={(e) => setReset((e.target as HTMLInputElement).checked)} /> bu itemların ilerlemesini sıfırla</label>
               </>
             )}
-            <label for="rp">onay için parola</label>
+            <label for="rp">parolan (kaydetmek için onay)</label>
             <input id="rp" type="password" autocomplete="current-password" value={pw} onInput={(e) => setPw((e.target as HTMLInputElement).value)} />
-            <div class="btns"><button class="btn pri" disabled={!pw || busy} onClick={doImport}>[ yükle ]</button></div>
+            <div class="btns"><button class="btn pri" disabled={!pw || busy} onClick={doImport}>[ paketi kaydet ]</button></div>
           </div>
         )}
       </fieldset>

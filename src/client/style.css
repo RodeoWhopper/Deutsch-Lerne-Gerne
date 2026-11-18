@@ -165,3 +165,5 @@ select { background: var(--bg); color: var(--hi); border: 1px solid var(--line);
 .term.has-nav > main { overflow-y: auto; min-height: 0; overscroll-behavior: contain; }
 .term.has-nav .nav { position: static; flex: none; }
 .term.has-nav > .prompt { flex: none; }
+
+input[type='file']::file-selector-button { background: transparent; color: var(--hi); border: 1px solid var(--line); min-height: 40px; padding: 0 10px; margin-right: 10px; font: inherit; }
